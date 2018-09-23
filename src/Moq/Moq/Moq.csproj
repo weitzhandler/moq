@@ -18,12 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="contentFiles\**\*.cs" />
-    <None Remove="contentFiles\**\*.*" />
-    <Content Include="contentFiles\**\*.*" CopyToOutputDirectory="PreserveNewest" Kind="$(ContentKind)" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

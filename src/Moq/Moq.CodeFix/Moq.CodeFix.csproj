@@ -6,7 +6,16 @@
     <IncludeRoslyn>true</IncludeRoslyn>
     <PrimaryOutputKind>Build</PrimaryOutputKind>
     <PrimaryOutputFrameworkSpecific>true</PrimaryOutputFrameworkSpecific>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Api/**</DefaultItemExcludes>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Api/**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Kind>$(PrimaryOutputKind)</Kind>
+      <FrameworkSpecific>true</FrameworkSpecific>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Stunts\Stunts\Stunts.csproj" Pack="false" />

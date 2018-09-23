@@ -6,15 +6,24 @@
     <IncludeRoslyn>true</IncludeRoslyn>
     <PrimaryOutputKind>Build</PrimaryOutputKind>
     <PrimaryOutputFrameworkSpecific>true</PrimaryOutputFrameworkSpecific>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Api/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
     <ProjectReference>
       <!-- This causes the output of the referenced projects to be packaged into the primary output folder too -->
-      <AdditionalProperties>PrimaryOutputKind=$(PrimaryOutputKind);IncludeApi=false</AdditionalProperties>
+      <AdditionalProperties>PrimaryOutputKind=$(PrimaryOutputKind)</AdditionalProperties>
     </ProjectReference>
   </ItemDefinitionGroup>
-  
+
+  <ItemGroup>
+    <Content Include="Api/**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Kind>$(PrimaryOutputKind)</Kind>
+      <FrameworkSpecific>true</FrameworkSpecific>
+    </Content>
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Stunts\Stunts.csproj" />
     <ProjectReference Include="..\Stunts.Internal\Stunts.Internal.csproj" />
