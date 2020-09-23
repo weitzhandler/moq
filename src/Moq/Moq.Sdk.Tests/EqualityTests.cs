@@ -78,6 +78,20 @@ namespace Moq.Sdk.Tests
         }
 
         [Fact]
+        public void ValueMatcherEqualsByEqualityComparer()
+        {
+            var comparer = StringComparer.OrdinalIgnoreCase;
+            var matcher = new ValueMatcher(typeof(string), "foo", comparer);
+            var other = new ValueMatcher(typeof(string), "FOO", comparer);
+
+            Assert.True(matcher.Equals(other));
+            Assert.Equal(matcher.GetHashCode(), other.GetHashCode());
+
+            Assert.False(matcher.Equals(new ValueMatcher(typeof(string), "bar")));
+            Assert.False(matcher.Equals(new ValueMatcher(typeof(object), "foo")));
+        }
+
+        [Fact]
         public void TupleOfEqualMatchersAreEqual()
         {
             var any = AnyMatcher<string>.Default;

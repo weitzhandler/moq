@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Moq.Sdk
@@ -8,14 +10,28 @@ namespace Moq.Sdk
     /// </summary>
     public class ValueMatcher : IArgumentMatcher, IEquatable<ValueMatcher>
     {
-        readonly Tuple<Type, object> value;
+        readonly (Type Type, object Object) value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValueMatcher"/> class.
         /// </summary>
         /// <param name="argumentType">Type of the argument to match.</param>
         /// <param name="matchValue">The value to match against.</param>
-        public ValueMatcher(Type argumentType, object matchValue) => value = Tuple.Create(argumentType, matchValue);
+        public ValueMatcher(Type argumentType, object matchValue)
+            : this(argumentType, matchValue, EqualityComparer<object>.Default)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValueMatcher"/> class.
+        /// </summary>
+        /// <param name="argumentType">Type of the argument to match.</param>
+        /// <param name="matchValue">The value to match against.</param>
+        /// <param name="equalityComparer">The equality comparer with which the value is to be matched.</param>
+        public ValueMatcher(Type argumentType, object matchValue, IEqualityComparer equalityComparer)
+        {
+            value = (argumentType, matchValue);
+            EqualityComparer = equalityComparer ?? EqualityComparer<object>.Default;
+        }
 
         /// <summary>
         /// Gets the type of the argument this matcher supports.
@@ -28,10 +44,15 @@ namespace Moq.Sdk
         public object MatchValue => value.Item2;
 
         /// <summary>
+        /// Gets the equality comparer with which the value is to be matched.
+        /// </summary>
+        public IEqualityComparer EqualityComparer { get; }
+
+        /// <summary>
         /// Evaluates whether the given value equals the <see cref="MatchValue"/> 
         /// received in the constructor, using default object equality behavior.
         /// </summary>
-        public bool Matches(object value) => object.Equals(value, MatchValue);
+        public bool Matches(object value) => EqualityComparer.Equals(value, MatchValue);
 
         /// <summary>
         /// Gets a friendly representation of the object.
@@ -53,13 +74,15 @@ namespace Moq.Sdk
         #region Equality
 
         /// <inheritdoc />
-        public bool Equals(ValueMatcher other) => object.Equals(value, other?.value);
+        public bool Equals(ValueMatcher other)
+            => value.Type.Equals(other.value.Type)
+            && EqualityComparer.Equals(value.Object, other?.value.Object);
 
         /// <inheritdoc />
         public override bool Equals(object obj) => Equals(obj as ValueMatcher);
 
         /// <inheritdoc />
-        public override int GetHashCode() => value.GetHashCode();
+        public override int GetHashCode() => value.Type.GetHashCode() ^ EqualityComparer.GetHashCode(value.Object);
 
         #endregion
     }
